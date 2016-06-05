@@ -1,7 +1,8 @@
-import static spark.Spark.*;
+import com.google.inject.Guice;
 
 public class App {
     public static void main(String[] args) {
-        get("/hello", (req, res) -> "Hola Hali :)");
+        Application application = Guice.createInjector().getInstance(Application.class);
+        application.run();
     }
 }
