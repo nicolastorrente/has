@@ -1,13 +1,15 @@
-package controller;
+package controller.routes;
 
 import api.SimpleResponse;
 import api.Ticket;
 import api.Wifi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import controller.tikets.TicketController;
 import org.apache.log4j.Logger;
 
 import static spark.Spark.get;
+import static spark.Spark.port;
 import static spark.Spark.post;
 
 public class RouteController {
@@ -24,6 +26,8 @@ public class RouteController {
     }
 
     public void register() {
+        port(Integer.valueOf(System.getenv("PORT") != null ? Integer.valueOf(System.getenv("PORT")) : 8080));
+
         get("/has/wifi", (request, response) -> objectMapper.writeValueAsString(new Wifi()));
 
         post("/has/tickets", (request, response) -> {

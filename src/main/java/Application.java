@@ -1,5 +1,5 @@
 import com.google.inject.Inject;
-import controller.RouteController;
+import controller.routes.RouteController;
 
 public class Application {
 
