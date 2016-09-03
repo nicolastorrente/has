@@ -1,6 +1,6 @@
 package controller.tikets;
 
-import api.Ticket;
+import api.ticket.Ticket;
 import com.google.inject.Inject;
 import org.apache.log4j.Logger;
 

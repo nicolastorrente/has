@@ -1,12 +1,19 @@
 package controller.tikets;
 
-import api.Ticket;
+import api.ticket.Photo;
+import api.ticket.Ticket;
 import org.apache.log4j.Logger;
 
+import javax.activation.DataHandler;
+import javax.activation.URLDataSource;
 import javax.inject.Inject;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 public class MailSender {
@@ -31,13 +38,35 @@ public class MailSender {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(mailCredentialsContainer.getMailCredentials().getMail()));
             message.setSubject(ticket.getSubject());
-            message.setText(ticket.getDescription()
-                    + "\n\nUbicacion: " + ticket.getLocation());
+
+            if (ticket.getPhotos() != null && !ticket.getPhotos().isEmpty()) {
+                MimeMultipart multipart = new MimeMultipart("related");
+                BodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setContent(this.generateBody(ticket), "text/html");
+                multipart.addBodyPart(messageBodyPart);
+                for(Photo photo : ticket.getPhotos()) {
+                    if (photo.getFileId() != null && photo.getFilePath() != null) {
+                        messageBodyPart = new MimeBodyPart();
+                        URL url = new URL(this.generatePhotoUrl(photo));
+//                        URL url = new URL("http://ramazancalay.com/qygxsyu7/pic-2.bp.blogspot.com/_Yb58DyFPuKs/TRwRQ0EQOPI/AAAAAAAAABk/QXoOftzO0g4/s1600/600px-Example.svg.png");
+                        URLDataSource ds = new URLDataSource(url);
+                        messageBodyPart.setDataHandler(new DataHandler(ds));
+                        messageBodyPart.setHeader("Content-ID", "<image>");
+                        multipart.addBodyPart(messageBodyPart);
+                    }
+                }
+                message.setContent(multipart);
+            } else {
+                message.setContent(this.generateBody(ticket), "text/html");
+            }
 
             Transport.send(message);
 
         } catch (MessagingException e) {
             logger.error("Error mandando mail de ticket: ", e);
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            logger.error("URL malformada en la creacion de ticket: ", e);
             throw new RuntimeException(e);
         }
     }
@@ -58,5 +87,22 @@ public class MailSender {
                         return new PasswordAuthentication(mailCredentials.getMail(), mailCredentials.getPassword());
                     }
                 });
+    }
+
+    private String generatePhotoUrl(Photo photo) {
+        String url = "https://api.telegram.org/file/bot219665776:";
+        url.concat(photo.getFileId());
+        url.concat("/");
+        url.concat(photo.getFilePath());
+        return url;
+    }
+
+    private String generateBody(Ticket ticket) {
+        String htmlText = "";
+        htmlText = htmlText.concat("Ubicacion: ").concat(ticket.getLocation()).concat("<br>");
+        htmlText = htmlText.concat("Descripción: ").concat(ticket.getDescription()).concat("<br>");
+        htmlText = htmlText.concat("Legajo de usuario: ").concat(ticket.getUser()).concat("<br><br>");
+        htmlText = htmlText.concat("--<br> Hali :)");
+        return htmlText;
     }
 }

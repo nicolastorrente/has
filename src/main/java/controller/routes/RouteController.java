@@ -1,16 +1,15 @@
 package controller.routes;
 
 import api.SimpleResponse;
-import api.Ticket;
 import api.Wifi;
+import api.ticket.Ticket;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.google.inject.Inject;
 import controller.tikets.TicketController;
 import org.apache.log4j.Logger;
 
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 public class RouteController {
 
@@ -23,10 +22,11 @@ public class RouteController {
     public RouteController(TicketController ticketController, ObjectMapper objectMapper) {
         this.ticketController = ticketController;
         this.objectMapper = objectMapper;
+        this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
     }
 
     public void register() {
-        port(Integer.valueOf(System.getenv("PORT") != null ? Integer.valueOf(System.getenv("PORT")) : 8080));
+        port(Integer.valueOf(System.getenv("PORT") != null ? Integer.valueOf(System.getenv("PORT")) : 8087));
 
         get("/has/wifi", (request, response) -> objectMapper.writeValueAsString(new Wifi()));
 

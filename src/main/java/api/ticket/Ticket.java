@@ -1,18 +1,21 @@
-package api;
+package api.ticket;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Ticket implements Serializable {
-    private User user;
+    private String user;
     private String subject;
     private String location;
     private String description;
+    private Document document;
+    private List<Photo> photos;
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
@@ -38,5 +41,21 @@ public class Ticket implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
     }
 }
