@@ -91,9 +91,9 @@ public class MailSender {
 
     private String generatePhotoUrl(Photo photo) {
         String url = "https://api.telegram.org/file/bot219665776:";
-        url.concat(photo.getFileId());
-        url.concat("/");
-        url.concat(photo.getFilePath());
+        url = url.concat(photo.getFileId());
+        url = url.concat("/");
+        url = url.concat(photo.getFilePath());
         return url;
     }
 
