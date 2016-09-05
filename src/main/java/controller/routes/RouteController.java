@@ -28,7 +28,10 @@ public class RouteController {
     public void register() {
         port(Integer.valueOf(System.getenv("PORT") != null ? Integer.valueOf(System.getenv("PORT")) : 8087));
 
-        get("/has/wifi", (request, response) -> objectMapper.writeValueAsString(new Wifi()));
+        get("/has/wifi", (request, response) -> {
+            response.header("Content-Type", "application/json");
+            return objectMapper.writeValueAsString(new Wifi());
+        });
 
         post("/has/tickets", (request, response) -> {
             try {
